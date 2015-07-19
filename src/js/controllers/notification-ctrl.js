@@ -1,6 +1,6 @@
-angular.module('Dashboard').controller('NotificationCtrl', ['Status', NotificationCtrl]);
+angular.module('Dashboard').controller('NotificationCtrl', ['Status', '$timeout', NotificationCtrl]);
 
-function NotificationCtrl(Status) {
+function NotificationCtrl(Status, $timeout) {
     var vm = this;
 
     function info() {
@@ -11,12 +11,17 @@ function NotificationCtrl(Status) {
         });
     }
     vm.info = info;
-    var notifications = [ ];
-    Status.get({}, function(status){
-        status.hits.forEach( function(item) {
-            notifications.push(item._source);
-        });
 
-    });
-    vm.notifications = notifications;
+    function callAtTimeout() {
+        var notifications = [];
+        Status.get({}, function(status) {
+            status.hits.forEach(function(item) {
+                notifications.push(item._source);
+            });
+        });
+        vm.notifications = notifications;
+        console.log('lol');
+    }
+    callAtTimeout();
+    $timeout(callAtTimeout, 5000);
 }
